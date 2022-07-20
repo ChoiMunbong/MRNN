@@ -1,5 +1,5 @@
-"""Main function for MRNN
-
+"""
+Main function for MRNN
 Reference: Jinsung Yoon, William R. Zame and Mihaela van der Schaar, 
            "Estimating Missing Data in Temporal Data Streams Using 
            Multi-Directional Recurrent Neural Networks," 
@@ -100,12 +100,12 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument(
       '--file_name',
-      default='data/google.csv',
+      default='C:/Users/ChoiMunBong/Desktop/MRNN/data/google.csv',
       type=str)
   parser.add_argument(
       '--seq_len',
       help='sequence length of time-series data',
-      default=7,
+      default=5,
       type=int)
   parser.add_argument(
       '--missing_rate',

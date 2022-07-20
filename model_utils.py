@@ -116,18 +116,15 @@ class biGRUCell(object):
     self.bh1 = tf.Variable(tf.zeros([self.hidden_layer_size]))
     
     # Weights for output layers
-    self.Wo = tf.Variable(tf.truncated_normal([self.hidden_layer_size * 2, 
-                                               self.target_size], 
-                                              mean=0, stddev=.01))
-    self.bo = tf.Variable(tf.truncated_normal([self.target_size], 
-                                              mean=0, stddev=.01))
+    self.Wo = tf.Variable(tf.random.truncated_normal([self.hidden_layer_size * 2, self.target_size], mean=0, stddev=0.01))
+    self.bo = tf.Variable(tf.random.truncated_normal([self.target_size], mean=0, stddev=0.01))
     
     # Placeholder for input vector with shape[batch, seq, embeddings]
-    self._inputs = tf.placeholder(tf.float32, 
+    self._inputs = tf.compat.v1.placeholder(tf.float32, 
                                   shape=[None, None, self.input_size], 
                                   name='inputs')  
     # Reversing the inputs by sequence for backward pass of the GRU
-    self._inputs_rev = tf.placeholder(tf.float32, 
+    self._inputs_rev = tf.compat.v1.placeholder(tf.float32, 
                                       shape=[None, None, self.input_size], 
                                       name='inputs_rev')
     

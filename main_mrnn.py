@@ -32,7 +32,7 @@ from mrnn import mrnn
 from utils import imputation_performance
 
 
-def main (args):
+def main(args):
   """MRNN main function.
   
   Args:
@@ -142,3 +142,4 @@ if __name__ == '__main__':
   
   # Call main function  
   output = main(args)
+  print(output)

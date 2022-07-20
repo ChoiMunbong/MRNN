@@ -60,8 +60,8 @@ class mrnn ():
     with tf.compat.v1.Session() as sess:        
         
       # input place holders
-      target = tf.placeholder(tf.float32, [self.seq_len, None, 1])
-      mask = tf.placeholder(tf.float32, [self.seq_len, None, 1])
+      target = tf.compat.v1.placeholder(tf.float32, [self.seq_len, None, 1])
+      mask = tf.compat.v1.placeholder(tf.float32, [self.seq_len, None, 1])
                 
       # Build rnn object
       rnn = biGRUCell(3, self.h_dim, 1)    
@@ -178,9 +178,9 @@ class mrnn ():
     m = np.reshape(m, [self.no * self.seq_len, self.dim])
     
     # input place holders
-    x_input = tf.placeholder(tf.float32, [None, self.dim])
-    target = tf.placeholder(tf.float32, [None, self.dim])
-    mask = tf.placeholder(tf.float32, [None, self.dim])
+    x_input = tf.compat.v1.placeholder(tf.float32, [None, self.dim])
+    target = tf.compat.v1.placeholder(tf.float32, [None, self.dim])
+    mask = tf.compat.v1.placeholder(tf.float32, [None, self.dim])
 
     # build a FC network
     U = tf.compat.v1.get_variable("U", shape=[self.dim, self.dim],

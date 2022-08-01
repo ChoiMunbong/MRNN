@@ -184,11 +184,11 @@ class mrnn ():
 
     # build a FC network
     U = tf.compat.v1.get_variable("U", shape=[self.dim, self.dim],
-                                  initializer=tf.contrib.layers.xavier_initializer())
+                                  initializer=tf.compat.v1.keras.initializers.glorot_normal)
     V1 = tf.compat.v1.get_variable("V1", shape=[self.dim, self.dim],
-                                   initializer=tf.contrib.layers.xavier_initializer())
+                                   initializer=tf.compat.v1.keras.initializers.glorot_normal)
     V2 = tf.compat.v1.get_variable("V2", shape=[self.dim, self.dim],
-                                   initializer=tf.contrib.layers.xavier_initializer())
+                                   initializer=tf.compat.v1.keras.initializers.glorot_normal)
     b = tf.Variable(tf.random.normal([self.dim]))
     
     L1 = tf.nn.sigmoid((tf.matmul(x_input, tf.linalg.set_diag(U, np.zeros([self.dim,]))) + \

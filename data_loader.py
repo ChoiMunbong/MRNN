@@ -15,7 +15,7 @@ import numpy as np
 from utils import MinMaxScaler
 
 
-def data_loader (file_name = 'data/google.csv', seq_len = 7, 
+def data_loader (file_name = 'data/test_loader.csv', seq_len = 2096,
                  missing_rate = 0.2):
   """Load complete data and introduce missingness.
   

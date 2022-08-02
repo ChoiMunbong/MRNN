@@ -87,8 +87,8 @@ def main(args):
   output = {'x': x, 'ori_x': ori_x, 'm': m, 't': t, 'imputed_x': imputed_x,
             'performance': performance}
    
-  if os.path.exists('tmp/mrnn_imputation'): 
-    shutil.rmtree('tmp/mrnn_imputation')
+  if os.path.exists('tmp\\mrnn_imputation'):
+    shutil.rmtree('tmp\\mrnn_imputation')
   
   return output
 
@@ -100,7 +100,7 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument(
       '--file_name',
-      default='C:/Users/ChoiMunBong/Desktop/MRNN/data/google.csv',
+      default='data/test_case.csv',
       type=str)
   parser.add_argument(
       '--seq_len',

@@ -147,7 +147,7 @@ class mrnn ():
                                                save_file_name)
           fw_input = graph.get_tensor_by_name('inputs:0')
           bw_input = graph.get_tensor_by_name('inputs_rev:0')
-          output = graph.get_tensor_by_name('map\TensorArrayStack\TensorArrayGatherV3:0')
+          output = graph.get_tensor_by_name('map\\TensorArrayStack\\TensorArrayGatherV3:0')
       
           imputed_data = sess.run(output, 
                                   feed_dict={fw_input: forward_input, 

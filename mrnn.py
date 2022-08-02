@@ -112,7 +112,7 @@ class mrnn ():
                                            inputs, outputs)
 
 
-def rnn_predict (self, x, m, t):
+  def rnn_predict (self, x, m, t):
     """Impute missing data using RNN block.
     
     Args:
@@ -237,8 +237,8 @@ def rnn_predict (self, x, m, t):
     tf.compat.v1.saved_model.simple_save(sess, save_file_name, 
                                          inputs, outputs)  
       
-      
-  def rnn_fc_predict(self, x, m, t):  
+
+  def rnn_fc_predict(self, x, m, t):
     """Impute missing data using RNN and FC.
     
     Args:
@@ -303,7 +303,7 @@ def rnn_predict (self, x, m, t):
     self.fc_train(x, m, t)
     print('Finish M-RNN training with both RNN and FC for imputation')
     
-    
+
   def transform(self, x, m, t):
     """Impute missing data using the entire MRNN.
     

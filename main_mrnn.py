@@ -22,6 +22,9 @@ from __future__ import print_function
 
 import argparse
 import warnings
+
+import pandas as pd
+
 warnings.filterwarnings("ignore")
 import numpy as np
 import shutil
@@ -87,8 +90,8 @@ def main(args):
   output = {'x': x, 'ori_x': ori_x, 'm': m, 't': t, 'imputed_x': imputed_x,
             'performance': performance}
    
-  if os.path.exists('tmp\\mrnn_imputation'):
-    shutil.rmtree('tmp\\mrnn_imputation')
+  if os.path.exists('tmp/mrnn_imputation'):
+    shutil.rmtree('tmp/mrnn_imputation')
   
   return output
 
@@ -105,7 +108,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '--seq_len',
       help='sequence length of time-series data',
-      default=5,
+      default=3,
       type=int)
   parser.add_argument(
       '--missing_rate',
@@ -143,3 +146,6 @@ if __name__ == '__main__':
   # Call main function  
   output = main(args)
   print(output)
+  print(output['imputed_x'].shape)
+  # df = pd.DataFrame(output, encodings = 'cp949')
+  # print(df['imputed_x'])

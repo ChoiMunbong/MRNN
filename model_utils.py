@@ -56,7 +56,10 @@ def initial_point_interpolation (x, m, t, imputed_x):
         if (t[i,j,k] > j):
           idx = np.where(m[i,:,k]==1)[0]
           # Do zero-hold interpolation
-          imputed_x[i,j,k] = x[i,np.min(idx),k]
+          try :
+            imputed_x[i,j,k] = x[i,np.amin(idx),k]
+          except :
+              pass
                     
   return imputed_x
 
@@ -90,7 +93,7 @@ class biGRUCell(object):
                                     self.hidden_layer_size]))
     self.bu = tf.Variable(tf.zeros([self.hidden_layer_size]))
     
-    self.Wh = tf.Variable(tf.zeros([self.input_size, 
+    self.Wh = tf.Variable(tf.zeros([self.input_size,
                                     self.hidden_layer_size]))
     self.Uh = tf.Variable(tf.zeros([self.hidden_layer_size, 
                                     self.hidden_layer_size]))
@@ -125,7 +128,7 @@ class biGRUCell(object):
     # Placeholder for input vector with shape[batch, seq, embeddings]
     self._inputs = tf.compat.v1.placeholder(tf.float32,
                                   shape=[None, None, self.input_size], 
-                                  name='inputs')  
+                                  name='inputs')
     # Reversing the inputs by sequence for backward pass of the GRU
     self._inputs_rev = tf.compat.v1.placeholder(tf.float32,
                                       shape=[None, None, self.input_size], 

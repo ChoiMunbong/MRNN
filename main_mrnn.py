@@ -135,7 +135,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '--metric_name',
       help='imputation performance metric',
-      default='rmse',
+      default='mae',
       type=str)
   
   args = parser.parse_args() 

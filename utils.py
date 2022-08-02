@@ -61,10 +61,10 @@ def imputation_performance (ori_x, imputed_x, m, metric_name):
   
   # Only compute the imputation performance if m = 0 (missing)
   if metric_name == 'mae':
-    performance = mean_absolute_error(ori_x, imputed_x, 1-m)
+    performance = mean_absolute_error(ori_x, imputed_x)
   elif metric_name == 'mse':
-    performance = mean_squared_error(ori_x, imputed_x, 1-m)
+    performance = mean_squared_error(ori_x, imputed_x)
   elif metric_name == 'rmse':
-    performance = np.sqrt(mean_squared_error(ori_x, imputed_x, 1-m))
+    performance = np.sqrt(mean_squared_error(ori_x, imputed_x))
     
   return performance

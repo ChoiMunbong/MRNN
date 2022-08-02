@@ -22,6 +22,8 @@ tf.get_logger().setLevel(logging.ERROR)
 import numpy as np
 from model_utils import biGRUCell, initial_point_interpolation
 
+tf.compat.v1.disable_v2_behavior()
+tf.compat.v1.disable_eager_execution()
 
 class mrnn ():
   """MRNN class with core functions.
@@ -136,6 +138,7 @@ class mrnn ():
       
       # Load saved model
       graph = tf.Graph()
+
       with graph.as_default():
         with tf.compat.v1.Session() as sess:          
           sess.run(tf.compat.v1.global_variables_initializer())

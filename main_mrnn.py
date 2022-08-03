@@ -24,6 +24,7 @@ import argparse
 import warnings
 
 import pandas as pd
+import sklearn.preprocessing
 
 warnings.filterwarnings("ignore")
 import numpy as np
@@ -59,7 +60,7 @@ def main(args):
   """  
   
   ## Load data
-  x, m, t, ori_x = data_loader(args.file_name, 
+  x, m, t, ori_x, scaler_sklearn = data_loader(args.file_name,
                                args.seq_len, 
                                args.missing_rate)
       
@@ -79,7 +80,8 @@ def main(args):
   
   # Impute missing data
   imputed_x = mrnn_model.transform(x, m, t)
-  
+
+
   # Evaluate the imputation performance
   performance = imputation_performance (ori_x, imputed_x, m, args.metric_name)
   
@@ -93,22 +95,23 @@ def main(args):
   if os.path.exists('tmp/mrnn_imputation'):
     shutil.rmtree('tmp/mrnn_imputation')
   
-  return output
+  return output, scaler_sklearn
 
 
 ##
 if __name__ == '__main__':
-  
+
   # Inputs for the main function
   parser = argparse.ArgumentParser()
   parser.add_argument(
       '--file_name',
       default='data/test_case.csv',
+      # default='data/test_case.csv',
       type=str)
   parser.add_argument(
       '--seq_len',
       help='sequence length of time-series data',
-      default=3,
+      default=6,
       type=int)
   parser.add_argument(
       '--missing_rate',
@@ -140,12 +143,37 @@ if __name__ == '__main__':
       help='imputation performance metric',
       default='mae',
       type=str)
-  
-  args = parser.parse_args() 
-  
-  # Call main function  
-  output = main(args)
+
+  args = parser.parse_args()
+
+
+  # Call main function
+  output, scaler_sklearn = main(args)
   print(output)
-  print(output['imputed_x'].shape)
+  print(output['ori_x'])
+
+  col = ['YMS, HM, Used']
+  lis = np.array([0.0, 0.0, 0.0])
+  for i in range(len(output['ori_x'])) :
+      print(output['ori_x'][i][0])
+      lis = np.concatenate([lis, output['ori_x'][i][0]])
+      if i == len(output['ori_x']) - 1 :
+          for j in range(len(output['ori_x'][i])) :
+            lis = np.concatenate([lis, output[i][j]])
+
+  #
+  # for i in output['ori_x'] :
+  #     for j in i:
+  #     # print(output['ori_x'][i][0])
+  #     # if i == len(output['ori_x']) - 1 :
+  #       lis = np.concatenate([lis, j])
+  #     #     for j in range(len(output['ori_x'][i])) :
+  #     #       lis = np.concatenate([lis, output[i][j]])
+
+  lis = lis.reshape(-1, 3)
+
+  lis = scaler_sklearn.inverse_transform(lis)
+  np.savetxt("result.csv", lis, delimiter=",", header='YMS, HM, Used', fmt='%f, %f, %f', comments='', encoding='cp949')
+  # df.to_csv('result.csv', ',', index=False)
   # df = pd.DataFrame(output, encodings = 'cp949')
   # print(df['imputed_x'])

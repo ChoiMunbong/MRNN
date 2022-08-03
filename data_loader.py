@@ -12,10 +12,10 @@ Contact: jsyoon0823@gmail.com
 
 # Necessary packages
 import numpy as np
-from utils import MinMaxScaler
+from utils import MinMaxScaler1
+from sklearn.preprocessing import MinMaxScaler
 
-
-def data_loader (file_name = 'data/google.csv', seq_len = 3,
+def data_loader (file_name = 'data/google.csv', seq_len = 5,
                  missing_rate = 0.2):
   """Load complete data and introduce missingness.
   
@@ -36,7 +36,10 @@ def data_loader (file_name = 'data/google.csv', seq_len = 3,
   # Reverse time order
   data = data[::-1]
   # Normalize the data
-  data, norm_parameters = MinMaxScaler(data)
+  data_sklearn = MinMaxScaler(feature_range=(0, 1))
+  data_sklearn.fit(data)
+
+  data, norm_parameters = MinMaxScaler1(data)
   
   # Parameters
   no, dim = data.shape
@@ -78,5 +81,5 @@ def data_loader (file_name = 'data/google.csv', seq_len = 3,
   # Fill 0 to the missing values
   x = np.nan_to_num(x, 0)
 
-  return x, m, t, ori_x       
+  return x, m, t, ori_x, data_sklearn
    

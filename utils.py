@@ -18,7 +18,7 @@ import numpy as np
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 
-def MinMaxScaler(data):      
+def MinMaxScaler1(data):
   """Normalization tool: Min Max Scaler.
   
   Args:
@@ -31,9 +31,12 @@ def MinMaxScaler(data):
   min_val = np.min(data, axis = 0)
   data = data - min_val
   max_val = np.max(data, axis = 0) + 1e-8
+  # max_val = max_val - min_val
   normalized_data = data / max_val
+  # normalized_data = normalized_data * (max_val - min_val) + min_val
   
   norm_parameters = {'min_val': min_val, 'max_val': max_val}
+
   return normalized_data, norm_parameters
 
 

@@ -14,7 +14,7 @@ Contact: jsyoon0823@gmail.com
 (3) Train FC part
 (4) Test FC part
 """
-
+sclar = None
 # Necessary Packages
 import tensorflow as tf
 import logging
@@ -107,8 +107,8 @@ class mrnn ():
       tf.compat.v1.saved_model.simple_save(sess, save_file_name, 
                                            inputs, outputs)
 
-      save_file_name = 'model/mrnn_imputation/rnn_feature_' + str(f + 1) + '/'
-      tf.compat.v1.saved_model.simple_save(sess, save_file_name,
+      save_file_name2 = 'model/mrnn_imputation/rnn_feature_' + str(f + 1) + '/'
+      tf.compat.v1.saved_model.simple_save(sess, save_file_name2,
                                            inputs, outputs)
 
 

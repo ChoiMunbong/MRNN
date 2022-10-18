@@ -25,7 +25,7 @@ from model_utils import biGRUCell, initial_point_interpolation
 tf.compat.v1.disable_v2_behavior()
 tf.compat.v1.disable_eager_execution()
 
-class mrnn ():
+class rnn ():
   """MRNN class with core functions.
   
   Attributes:
@@ -164,132 +164,7 @@ class mrnn ():
     imputed_x = initial_point_interpolation (x, m, t, imputed_x)
                     
     return imputed_x
-    
-      
-  def fc_train(self, x, m, t):
-    """Train Fully Connected Networks after RNN block.
-    
-    Args:
-      - x: incomplete data
-      - m: mask matrix
-      - t: time matrix
-    """
-    tf.compat.v1.reset_default_graph()    
-          
-    # rnn imputation results
-    rnn_imputed_x = self.rnn_predict(x, m, t)
-    
-    # Reshape the data for FC train
-    x = np.reshape(x, [self.no * self.seq_len, self.dim])
-    rnn_imputed_x = np.reshape(rnn_imputed_x, [self.no * self.seq_len, self.dim])    
-    m = np.reshape(m, [self.no * self.seq_len, self.dim])
-    
-    # input place holders
-    x_input = tf.compat.v1.placeholder(tf.float32, [None, self.dim])
-    target = tf.compat.v1.placeholder(tf.float32, [None, self.dim])
-    mask = tf.compat.v1.placeholder(tf.float32, [None, self.dim])
 
-    # build a FC network
-    U = tf.compat.v1.get_variable("U", shape=[self.dim, self.dim],
-                                  initializer=tf.compat.v1.keras.initializers.glorot_normal)
-    V1 = tf.compat.v1.get_variable("V1", shape=[self.dim, self.dim],
-                                   initializer=tf.compat.v1.keras.initializers.glorot_normal)
-    V2 = tf.compat.v1.get_variable("V2", shape=[self.dim, self.dim],
-                                   initializer=tf.compat.v1.keras.initializers.glorot_normal)
-    b = tf.Variable(tf.random.normal([self.dim]))
-    
-    L1 = tf.nn.sigmoid((tf.matmul(x_input, tf.linalg.set_diag(U, np.zeros([self.dim,]))) + \
-                        tf.matmul(target, tf.linalg.set_diag(V1, np.zeros([self.dim,]))) + \
-                        tf.matmul(mask, V2) + b))  
-    
-    W = tf.Variable(tf.random.normal([self.dim]))
-    a = tf.Variable(tf.random.normal([self.dim]))
-    hypothesis = W * L1 + a
-
-    outputs = tf.nn.sigmoid(hypothesis)
-    
-    # reshape out for sequence_loss
-    loss = tf.sqrt(tf.reduce_mean(tf.square(outputs - target)) )
-
-    # Optimizer
-    optimizer = tf.compat.v1.train.AdamOptimizer(self.learning_rate)   
-    train = optimizer.minimize(loss)
-    
-    # Sessions
-    sess = tf.compat.v1.Session()
-    sess.run(tf.compat.v1.global_variables_initializer())
-        
-    # Training step
-    for i in range(self.iteration * 20):
-      batch_idx = np.random.permutation(x.shape[0])[:self.batch_size]
-      _, step_loss = sess.run([train, loss], 
-                              feed_dict={x_input: x[batch_idx, :], 
-                                         target: rnn_imputed_x[batch_idx, :], 
-                                         mask: m[batch_idx, :]})
-            
-    # Save model
-    inputs = {'x_input': x_input, 
-              'target': target,
-              'mask': mask}
-    outputs = {'imputation': outputs}
-        
-    save_file_name = 'tmp/mrnn_imputation/fc_feature/'
-    tf.compat.v1.saved_model.simple_save(sess, save_file_name, 
-                                         inputs, outputs)
-
-    save_file_name2 = 'model/mrnn_imputation/fc_feature/'
-    tf.compat.v1.saved_model.simple_save(sess, save_file_name2,
-                                         inputs, outputs)
-
-  def rnn_fc_predict(self, x, m, t):
-    """Impute missing data using RNN and FC.
-    
-    Args:
-      - x: incomplete data
-      - m: mask matrix
-      - t: time matrix
-    
-    Returns:
-      - fc_imputed_x: imputed data using RNN and FC
-    """     
-    # rnn imputation results
-    rnn_imputed_x = self.rnn_predict(x, m, t)
-    
-    # Reshape the data for FC predict
-    x = np.reshape(x, [self.no * self.seq_len, self.dim])
-    rnn_imputed_x = np.reshape(rnn_imputed_x, [self.no * self.seq_len, self.dim])    
-    m = np.reshape(m, [self.no * self.seq_len, self.dim])
-    
-    save_file_name = 'tmp/mrnn_imputation/fc_feature/'
-      
-    # Load saved data
-    graph = tf.Graph()
-    with graph.as_default():
-      with tf.compat.v1.Session() as sess:
-          
-        sess.run(tf.compat.v1.global_variables_initializer())
-        tf.compat.v1.saved_model.loader.load(sess, [tf.compat.v1.saved_model.SERVING], 
-                                             save_file_name)
-        x_input = graph.get_tensor_by_name('Placeholder:0')
-        target = graph.get_tensor_by_name('Placeholder_1:0')
-        mask = graph.get_tensor_by_name('Placeholder_2:0')
-        outputs = graph.get_tensor_by_name('Sigmoid_1:0')
-        
-        fc_imputed_x = sess.run(outputs, feed_dict={x_input: x, 
-                                                    target: rnn_imputed_x, 
-                                                    mask: m})
-        
-    # Reshape imputed data to 3d array
-    fc_imputed_x = np.reshape(fc_imputed_x, [self.no, self.seq_len, self.dim])
-    m = np.reshape(m, [self.no, self.seq_len, self.dim]) 
-    x = np.reshape(x, [self.no, self.seq_len, self.dim]) 
-
-    fc_imputed_x = fc_imputed_x * (1-m) + x * m           
-    fc_imputed_x = initial_point_interpolation (x, m, t, fc_imputed_x)
-                    
-    return fc_imputed_x
-  
-  
   def fit(self, x, m, t):
     """Train the entire MRNN.
     
@@ -303,7 +178,6 @@ class mrnn ():
       self.rnn_train(x, m, t, f)
       print('Finish ' + str(f+1) + '-th feature training with RNN for imputation')
     # Train FC part  
-    self.fc_train(x, m, t)
     print('Finish M-RNN training with both RNN and FC for imputation')
     
 
@@ -319,6 +193,6 @@ class mrnn ():
       - imputed_x: imputed data
     """
     # Impute with both RNN and FC part
-    imputed_x = self.rnn_fc_predict(x, m, t)
+    imputed_x = self.rnn_predict(x, m, t)
     
     return imputed_x

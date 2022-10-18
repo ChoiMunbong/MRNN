@@ -15,7 +15,7 @@ import numpy as np
 from utils import MinMaxScaler1
 from sklearn.preprocessing import MinMaxScaler
 
-def data_loader (file_name = 'data/google.csv', seq_len = 5,
+def data_loader (file_name = '/Users/choimunbong/PycharmProjects/MRNN/data/test_case2.csv', seq_len = 5,
                  missing_rate = 0.2):
   """Load complete data and introduce missingness.
   
@@ -34,6 +34,8 @@ def data_loader (file_name = 'data/google.csv', seq_len = 5,
   # Load the dataset
   data = np.loadtxt(file_name, delimiter = ",", skiprows = 1)
   # Reverse time order
+  # user = "AA1040호"
+  # data = data[user]
   data = data[::-1]
   # Normalize the data
   data_sklearn = MinMaxScaler(feature_range=(0, 1))

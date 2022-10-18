@@ -48,7 +48,8 @@ def data_loader (file_name = '/Users/choimunbong/PycharmProjects/MRNN/data/test_
   no = no - seq_len
   
   # Define original data
-  ori_x = list()  
+  ori_x = list()
+
   for i in range(no):
     temp_ori_x = data[i:(i+seq_len)]
     ori_x = ori_x + [temp_ori_x]
@@ -81,7 +82,6 @@ def data_loader (file_name = '/Users/choimunbong/PycharmProjects/MRNN/data/test_
   ori_x = np.asarray(ori_x)  
   
   # Fill 0 to the missing values
-  x = np.nan_to_num(x, 0)
-
+  # x = np.nan_to_num(x, 0)
   return x, m, t, ori_x, data_sklearn
    

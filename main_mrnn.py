@@ -21,6 +21,7 @@ from __future__ import division
 from __future__ import print_function
 
 import argparse
+import statistics
 import warnings
 
 import impyute
@@ -28,7 +29,7 @@ import pandas as pd
 import tensorflow as tf
 from lstm import rnn
 import sklearn.preprocessing
-from impyute.imputation.cs import mice, mean, fast_knn
+from impyute.imputation.cs import mice, mean, fast_knn, em
 from impyute.imputation.ts import moving_window
 warnings.filterwarnings("ignore")
 import numpy as np
@@ -77,39 +78,74 @@ def main(args):
                       'batch_size': args.batch_size,
                       'iteration': args.iteration, 
                       'learning_rate': args.learning_rate}
-
-  lstm = rnn(x, model_parameters)
-  lstm.fit(x,m,t)
-  imputed_x_lstm = lstm.transform(x,m,t)
   performance_matrix = ('mae', 'mse', 'rmse')
-  for metrix_name in performance_matrix :
-    performance = imputation_performance(ori_x, imputed_x_lstm, metrix_name)
-    print(f"{metrix_name} : {performance}")
-  performance = 1
-  output2 = {'x': x, 'ori_x': ori_x, 'm': m, 't': t, 'imputed_x': imputed_x_lstm,
-            'performance': performance}
+# #using rnn model
+#   lstm = rnn(x, model_parameters) #change mrnn or rnn
+#   lstm.fit(x,m,t)
+#   imputed_x_lstm = lstm.transform(x,m,t)
+#
+#
+#   performance = 1
+#   output = {'x': x, 'ori_x': ori_x, 'm': m, 't': t, 'imputed_x': imputed_x_lstm,
+#             'performance': performance}
 
-  # # Fit mrnn_model
-  # mrnn_model = mrnn(x, model_parameters)
-  # mrnn_model.fit(x, m, t)
-  # # Impute missing data
-  # imputed_x = mrnn_model.transform(x, m, t)
-  #
-  #
-  # # Evaluate the imputation performance
-  # performance = imputation_performance (ori_x, imputed_x, args.metric_name)
-  #
-  # # Report the result
-  # print(args.metric_name + ': ' + str(np.round(performance, 4)))
-  #
-  # # Return the output
-  # output = {'x': x, 'ori_x': ori_x, 'm': m, 't': t, 'imputed_x': imputed_x,
-  #           'performance': performance}
+  # Fit mrnn_model
+  mrnn_model = mrnn(x, model_parameters)
+  mrnn_model.fit(x, m, t)
+  # Impute missing data
+  imputed_x = mrnn_model.transform(x, m, t)
+
+
+  # Evaluate the imputation performance
+  performance = imputation_performance (ori_x, imputed_x, args.metric_name)
+
+  # Report the result
+  print(args.metric_name + ': ' + str(np.round(performance, 4)))
+
+  # Return the output
+  output = {'x': x, 'ori_x': ori_x, 'm': m, 't': t, 'imputed_x': imputed_x,
+            'performance': performance}
 
   if os.path.exists('tmp/mrnn_imputation'):
     shutil.rmtree('tmp/mrnn_imputation')
+  #######################################################################
+  performance1 = list()
+  performance1_1 = list()
+  performance1_2 = list()
 
-  return output2, scaler_sklearn
+  performance2 = list()
+  performance2_1 = list()
+  performance2_2 = list()
+  print(x)#
+  for i in range(len(x)) :#
+      imputed_x = fast_knn(x[i], k=20)#
+      for metrix_name in performance_matrix:
+          if metrix_name == 'mae' :
+            performance1.append(imputation_performance(ori_x[i], imputed_x, metrix_name))
+          if metrix_name == 'mse' :
+            performance1_1.append(imputation_performance(ori_x[i], imputed_x, metrix_name))
+          if metrix_name == 'rmse' :
+            performance1_2.append(imputation_performance(ori_x[i], imputed_x, metrix_name))
+          # print(f"fast-knn {metrix_name} : {performance}")
+
+      imputed_x = moving_window(x[i])#s
+      for metrix_name in performance_matrix:
+          if metrix_name == 'mae':
+              performance2.append(imputation_performance(ori_x[i], imputed_x, metrix_name))
+          if metrix_name == 'mse':
+              performance2_1.append(imputation_performance(ori_x[i], imputed_x, metrix_name))
+          if metrix_name == 'rmse':
+              performance2_2.append(imputation_performance(ori_x[i], imputed_x, metrix_name))
+  print(f"k-nn mae{statistics.mean(performance1)}")
+  print(f"k-nn mse{statistics.mean(performance1_1)}")
+  print(f"k-nn rmse{statistics.mean(performance1_2)}")
+
+  print(f"moving_window mae{statistics.mean(performance2)}")
+  print(f"moving_window mse{statistics.mean(performance2_1)}")
+  print(f"moving_window rmse{statistics.mean(performance2_2)}")
+  #######################################################################
+  output = 0
+  return output, scaler_sklearn
 
 
 ##
@@ -125,7 +161,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '--seq_len',
       help='sequence length of time-series data',
-      default=24,
+      default=96,
       type=int)
   parser.add_argument(
       '--missing_rate',
@@ -135,7 +171,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '--h_dim',
       help='hidden state dimensions',
-      default=10,
+      default=96,
       type=int)
   parser.add_argument(
       '--batch_size',

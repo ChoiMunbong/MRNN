@@ -54,13 +54,14 @@ def imputation_performance (ori_x, imputed_x, metric_name):
   """
   
   assert metric_name in ['mae','mse','rmse']
+  # ori_x[:, np.newaxis]
+  # imputed_x = np.expand_dims(imputed_x, axis=0) #
 
   if len(ori_x.shape) >= 3 :
     no, seq_len, dim = ori_x.shape
     ori_x = np.reshape(ori_x, [no * seq_len, dim])
     imputed_x = np.reshape(imputed_x, [no * seq_len, dim])
 
-  
   # Only compute the imputation performance if m = 0 (missing)
   if metric_name == 'mae':
     performance = mean_absolute_error(ori_x, imputed_x)

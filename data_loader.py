@@ -15,7 +15,7 @@ import numpy as np
 from utils import MinMaxScaler1
 from sklearn.preprocessing import MinMaxScaler
 
-def data_loader (file_name = '/Users/choimunbong/PycharmProjects/MRNN/data/test_case2.csv', seq_len = 5,
+def data_loader (file_name = '/Users/choimunbong/PycharmProjects/MRNN/data/test_case.csv', seq_len = 5,
                  missing_rate = 0.2):
   """Load complete data and introduce missingness.
   

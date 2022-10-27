@@ -72,42 +72,52 @@ def main(args):
   # Remove 'tmp/mrnn_imputation' directory if exist
   if os.path.exists('tmp/mrnn_imputation'):
     shutil.rmtree('tmp/mrnn_imputation')
-  
+  if os.path.exists('tmp'):
+    shutil.rmtree('tmp')
+  if os.path.exists('model'):
+    shutil.rmtree('model')
   # mrnn model parameters
   model_parameters = {'h_dim': args.h_dim,
                       'batch_size': args.batch_size,
                       'iteration': args.iteration, 
                       'learning_rate': args.learning_rate}
   performance_matrix = ('mae', 'mse', 'rmse')
+
 # #using rnn model
 #   lstm = rnn(x, model_parameters) #change mrnn or rnn
 #   lstm.fit(x,m,t)
-#   imputed_x_lstm = lstm.transform(x,m,t)
+#   imputed_x = lstm.transform(x,m,t)
 #
+#   for metrix_name in performance_matrix:
+#     performance = imputation_performance(ori_x, imputed_x, metrix_name)
+#     print(f"m-rnn {metrix_name} : {performance}")
 #
 #   performance = 1
-#   output = {'x': x, 'ori_x': ori_x, 'm': m, 't': t, 'imputed_x': imputed_x_lstm,
+#   output = {'x': x, 'ori_x': ori_x, 'm': m, 't': t, 'imputed_x': imputed_x,
 #             'performance': performance}
-
-  # Fit mrnn_model
-  mrnn_model = mrnn(x, model_parameters)
-  mrnn_model.fit(x, m, t)
-  # Impute missing data
-  imputed_x = mrnn_model.transform(x, m, t)
-
-
-  # Evaluate the imputation performance
-  performance = imputation_performance (ori_x, imputed_x, args.metric_name)
-
-  # Report the result
-  print(args.metric_name + ': ' + str(np.round(performance, 4)))
-
-  # Return the output
-  output = {'x': x, 'ori_x': ori_x, 'm': m, 't': t, 'imputed_x': imputed_x,
-            'performance': performance}
-
-  if os.path.exists('tmp/mrnn_imputation'):
-    shutil.rmtree('tmp/mrnn_imputation')
+#################################################################
+  # # Fit mrnn_model
+  # mrnn_model = rnn(x, model_parameters)
+  # mrnn_model.fit(x, m, t)
+  # # Impute missing data
+  # imputed_x = mrnn_model.transform(x, m, t)
+  #
+  # # Evaluate the imputation performance
+  # for metrix_name in performance_matrix:
+  #   # print(ori_x)
+  #   # print(f" i {imputed_x}")
+  #   performance = imputation_performance(ori_x, imputed_x, metrix_name)
+  #   print(f"m-rnn {metrix_name} : {performance}")
+  #
+  # # Report the result
+  # # print(args.metric_name + ': ' + str(np.round(performance, 4)))
+  # performance = 1
+  # # Return the output
+  # output = {'x': x, 'ori_x': ori_x, 'm': m, 't': t, 'imputed_x': imputed_x,
+  #           'performance': performance}
+#
+#   if os.path.exists('tmp/mrnn_imputation'):
+#     shutil.rmtree('tmp/mrnn_imputation')
   #######################################################################
   performance1 = list()
   performance1_1 = list()
@@ -117,8 +127,14 @@ def main(args):
   performance2_1 = list()
   performance2_2 = list()
   print(x)#
+  ori_x2 = ori_x
+
+  # for i in range(round(len(ori_x)*0.5)) :
+  #     ori_x2[np.random.randint(len(ori_x2)), 2] = np.nan
+
+  # print(ori_x2)
   for i in range(len(x)) :#
-      imputed_x = fast_knn(x[i], k=20)#
+      imputed_x = fast_knn(x[i], k=30)
       for metrix_name in performance_matrix:
           if metrix_name == 'mae' :
             performance1.append(imputation_performance(ori_x[i], imputed_x, metrix_name))
@@ -128,7 +144,7 @@ def main(args):
             performance1_2.append(imputation_performance(ori_x[i], imputed_x, metrix_name))
           # print(f"fast-knn {metrix_name} : {performance}")
 
-      imputed_x = moving_window(x[i])#s
+      imputed_x = moving_window(x[i], wsize = 3) #s
       for metrix_name in performance_matrix:
           if metrix_name == 'mae':
               performance2.append(imputation_performance(ori_x[i], imputed_x, metrix_name))
@@ -136,9 +152,10 @@ def main(args):
               performance2_1.append(imputation_performance(ori_x[i], imputed_x, metrix_name))
           if metrix_name == 'rmse':
               performance2_2.append(imputation_performance(ori_x[i], imputed_x, metrix_name))
-  print(f"k-nn mae{statistics.mean(performance1)}")
-  print(f"k-nn mse{statistics.mean(performance1_1)}")
-  print(f"k-nn rmse{statistics.mean(performance1_2)}")
+
+  # print(f"k-nn mae{statistics.mean(performance1)}")
+  # print(f"k-nn mse{statistics.mean(performance1_1)}")
+  # print(f"k-nn rmse{statistics.mean(performance1_2)}")
 
   print(f"moving_window mae{statistics.mean(performance2)}")
   print(f"moving_window mse{statistics.mean(performance2_1)}")
@@ -155,13 +172,13 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument(
       '--file_name',
-      default='data/test_case2.csv',
+      default='/Users/choimunbong/PycharmProjects/MRNN/data/test_case2.csv',
       # default='data/test_case.csv',
       type=str)
   parser.add_argument(
       '--seq_len',
       help='sequence length of time-series data',
-      default=96,
+      default = 96,
       type=int)
   parser.add_argument(
       '--missing_rate',
@@ -171,17 +188,17 @@ if __name__ == '__main__':
   parser.add_argument(
       '--h_dim',
       help='hidden state dimensions',
-      default=96,
+      default=16,
       type=int)
   parser.add_argument(
       '--batch_size',
       help='the number of samples in mini batch',
-      default=96*7,
+      default=128,
       type=int)
   parser.add_argument(
       '--iteration',
       help='the number of iteration',
-      default=2000,
+      default=1000,
       type=int)
   parser.add_argument(
       '--learning_rate',

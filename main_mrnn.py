@@ -30,7 +30,7 @@ import tensorflow as tf
 from lstm import rnn
 import sklearn.preprocessing
 # from impyute.imputation.cs import mice, mean, fast_knn, em
-# from impyute.imputation.ts import moving_window
+# from impyute.imputation.ts impo rt moving_window
 warnings.filterwarnings("ignore")
 import numpy as np
 import shutil
@@ -41,6 +41,8 @@ from data_loader import data_loader
 from mrnn import mrnn
 from utils import imputation_performance
 
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = '0'
 
 def main(args):
   """MRNN main function.

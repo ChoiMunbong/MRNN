@@ -88,10 +88,10 @@ else :
 # user_list = ['AA218호', 'AA1985호', 'AA314호', 'AA1822호', 'AA1334호', 'AA212호', 'AA492호'] # 각 계약별 대표되는 고객 #6월
 # user_list = ['AA195호', 'AA116호', 'AA538호', 'AA14호', 'AA948호', 'AA263호', 'AA1122호'] # 각 계약별 대표되는 고객 #5
 # user_list = ['AA195호', 'AA116호', 'AA172호', 'AA32호', 'AA739호', 'AA476호', 'AA783호'] #4
-if month > 9 :
-    path = f"/Users/choimunbong/Documents/경진대회__전력사용량1_나주시/nj_2018{month}.csv"
-else :
-    path = f"/Users/choimunbong/Documents/경진대회__전력사용량1_나주시/nj_20180{month}.csv"
+# if month > 9 :
+#     path = f"/Users/choimunbong/Documents/경진대회__전력사용량1_나주시/nj_2018{month}.csv"
+# else :
+#     path = f"/Users/choimunbong/Documents/경진대회__전력사용량1_나주시/nj_20180{month}.csv"
 
 user_list = list()
 file = pd.read_csv(path, encoding="cp949")

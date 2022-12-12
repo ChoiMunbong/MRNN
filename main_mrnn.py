@@ -176,7 +176,7 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument(
       '--file_name',
-      default='./data/test_case.csv',
+      default='./data/test_case2.csv',
       # default='data/test_case.csv',
       type=str)
   parser.add_argument(
